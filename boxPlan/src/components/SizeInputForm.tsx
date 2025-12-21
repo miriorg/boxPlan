@@ -1,29 +1,39 @@
-import { useState } from 'react';
-import { Dimensions } from '../utils/planning';
+import { useState, useEffect } from 'react';
+import type { Dimensions } from '../utils/planning';
 
 interface SizeInputFormProps {
   onCreatePlan: (dimensions: Dimensions) => void;
+  initialDimensions: Dimensions | null; // Appから渡される初期値
 }
 
-const SizeInputForm = ({ onCreatePlan }: SizeInputFormProps): JSX.Element => {
-  const [dimensions, setDimensions] = useState<Dimensions>({
+const SizeInputForm = ({ onCreatePlan, initialDimensions }: SizeInputFormProps): JSX.Element => {
+  const [dimensions, setDimensions] = useState<Dimensions>(initialDimensions || {
     height: 1000,
     width: 1200,
     depth: 550,
   });
   const [error, setError] = useState<string>('');
 
+  // propsから渡された初期値が変更されたら、フォームの値を更新する
+  useEffect(() => {
+    if (initialDimensions) {
+      setDimensions(initialDimensions);
+    }
+  }, [initialDimensions]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log('handleChange called. name:', name, 'value:', value); // 追加
     setDimensions(prev => ({
       ...prev,
       [name]: value === '' ? 0 : parseInt(value, 10),
     }));
+    console.log('dimensions updated via handleChange to:', dimensions); // これは非同期なので、古い値が表示される可能性あり
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (dimensions.height <= 0 || dimensions.width <= 0 || dimensions.depth <= 0) {
+    if (Number(dimensions.height) <= 0 || Number(dimensions.width) <= 0 || Number(dimensions.depth) <= 0) { // Number() を追加
       setError('すべての寸法に正の値を入力してください。');
       return;
     }

@@ -244,6 +244,11 @@ export const encodePlanToString = (plan: Plan): string => {
  */
 export const decodeStringToPlan = (encodedString: string, allBoxes: Box[]): Plan | null => {
   try {
+    // Base64として有効な文字が含まれているか簡易的にチェック
+    if (!/^[A-Za-z0-9+/=]*$/.test(encodedString)) {
+      console.error("Invalid Base64 characters in encoded string.");
+      return null;
+    }
     const jsonString = decodeURIComponent(atob(encodedString));
     const simplifiedPlan = JSON.parse(jsonString);
 

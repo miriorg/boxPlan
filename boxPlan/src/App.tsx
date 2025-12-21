@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { runShareTests } from './utils/share.test'; // .ts を削除
 import './App.css';
 import SizeInputForm from './components/SizeInputForm';
 import PlanResults from './components/PlanResults';
 import EditDialog from './components/EditDialog'; // 追加
-import { boxData } from './boxData.js';
-import { createPlans, Plan, Dimensions, Box, PlacedBox, encodePlanToString, decodeStringToPlan } from './utils/planning'; // エンコード/デコード関数もインポート
+import { boxData } from './boxData';
+import { createPlans, type Plan, type Dimensions, type Box, type PlacedBox } from './utils/planning';
+import { serializePlan, deserializePlan } from './utils/share'; // 共有機能の関数をインポート
 
 interface SelectedBoxInfo {
   boxId: string;
@@ -20,32 +22,38 @@ function App(): JSX.Element {
   const [selectedBoxInfo, setSelectedBoxInfo] = useState<SelectedBoxInfo | null>(null);
   const [heightExceededError, setHeightExceededError] = useState<string | null>(null); // 高さ超過エラー
 
+  // コンポーネントマウント時にテストを実行
+  useEffect(() => {
+    runShareTests();
+  }, []);
+
   // URLからプランをデコードして初期表示
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const encodedPlan = params.get('plan');
-    if (encodedPlan) {
-      console.log("Decoding plan from URL:", encodedPlan);
-      const decodedPlan = decodeStringToPlan(encodedPlan, boxData);
-      if (decodedPlan) {
-        setPlans([decodedPlan]);
-        // デコードされたプランを表示する場合、元のスペース寸法は不明なので入力フォームは初期値のまま
-        // または、デコードされたプランから逆算してスペース寸法を設定するロジックが必要
-        // 現状ではスペース寸法はnullのまま、またはhandleCreatePlanを呼んで再計算させる
+    const shared = params.get('plan');
+    if (shared) {
+      console.log("Decoding plan from URL:", shared);
+      const decoded = deserializePlan(shared);
+      if (decoded) {
+        // 復元した寸法とプランをstateに設定
+        setSpaceDimensions(decoded.input);
+        // planは単一のオブジェクトなので配列にラップする
+        setPlans([decoded.plan as Plan]);
       }
     }
   }, []); // 初回マウント時のみ実行
 
   // plans の変更を監視し、URLを更新
   useEffect(() => {
-    if (plans && plans.length > 0) {
+    // プランと寸法が両方存在する場合のみURLを生成
+    if (plans && plans.length > 0 && spaceDimensions) {
       // 共有するプランは1つ目のプランと仮定（複数プランの場合はどのプランを共有するか選択が必要）
-      const encoded = encodePlanToString(plans[0]);
+      const encoded = serializePlan(spaceDimensions, plans[0]);
       const newUrl = `${window.location.origin}${window.location.pathname}?plan=${encoded}`;
       window.history.pushState({ path: newUrl }, '', newUrl);
       console.log("URL updated:", newUrl);
     }
-  }, [plans]); // plans が変更されたときに実行
+  }, [plans, spaceDimensions]); // plans または spaceDimensions が変更されたときに実行
 
   const handleCreatePlan = (dimensions: Dimensions) => {
     console.log('Creating plan with dimensions:', dimensions);
@@ -60,7 +68,7 @@ function App(): JSX.Element {
     const plan = plans ? plans[planIndex] : undefined;
     const currentBox = plan?.boxes.find(b => b.boxId === boxId && b.row === row && b.col === col);
     const currentBoxDetails = boxData.find(b => b.id === currentBox?.boxId);
-    
+
     setSelectedBoxInfo({ boxId, row, col, planIndex, currentBoxDetails });
     console.log('Box clicked:', { boxId, row, col, planIndex, currentBoxDetails });
   };
@@ -163,8 +171,8 @@ function App(): JSX.Element {
         <p>最適な収納ボックスの組み合わせを見つけよう</p>
       </header>
       <main>
-        <SizeInputForm onCreatePlan={handleCreatePlan} />
-        {plans ? (
+        <SizeInputForm onCreatePlan={handleCreatePlan} initialDimensions={spaceDimensions} />
+        {plans && plans.length > 0 ? (
           <PlanResults plans={plans} allBoxes={boxData} onBoxClick={handleBoxClick} />
         ) : (
           <div className="results-section">
@@ -183,7 +191,7 @@ function App(): JSX.Element {
       )}
 
       {selectedBoxInfo && plans && (
-        <EditDialog 
+        <EditDialog
           selectedBoxInfo={selectedBoxInfo}
           allBoxes={boxData}
           currentPlan={plans[selectedBoxInfo.planIndex]}

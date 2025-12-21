@@ -1,14 +1,13 @@
-
-
-import { Plan, Box } from '../utils/planning';
+import type { Plan, Box } from '../utils/planning';
 import LayoutImage from './LayoutImage';
 
 interface PlanResultsProps {
   plans: Plan[];
   allBoxes: Box[];
+  onBoxClick: (boxId: string, row: number, col: number, planIndex: number) => void;
 }
 
-const PlanResults = ({ plans, allBoxes }: PlanResultsProps): JSX.Element => {
+const PlanResults = ({ plans, allBoxes, onBoxClick }: PlanResultsProps): JSX.Element => {
   return (
     <div className="results-section">
       <h2>提案プラン</h2>
@@ -16,8 +15,12 @@ const PlanResults = ({ plans, allBoxes }: PlanResultsProps): JSX.Element => {
         {plans.map((plan, index) => (
           <div key={plan.id} className="plan-card">
             <h3>プラン {index + 1} ({plan.manufacturer})</h3>
-            
-            <LayoutImage plan={plan} allBoxes={allBoxes} />
+
+            <LayoutImage
+              plan={plan}
+              allBoxes={allBoxes}
+              onBoxClick={(boxId, row, col) => onBoxClick(boxId, row, col, index)}
+            />
 
             <p>スペース活用率: {plan.utilization.toFixed(1)}%</p>
             <p>ボックス総数: {plan.boxCount}個</p>

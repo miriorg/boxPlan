@@ -1,7 +1,7 @@
 // boxPlan/src/components/EditDialog.tsx
 
 import { useState } from 'react';
-import { Box, Plan, PlacedBox } from '../utils/planning'; // Box, Plan, PlacedBox をインポート
+import type { Box, Plan, PlacedBox } from '../utils/planning'; // Box, Plan, PlacedBox をインポート
 
 interface SelectedBoxInfo {
   boxId: string;
@@ -29,7 +29,7 @@ const EditDialog = ({ selectedBoxInfo, allBoxes, currentPlan, onClose, onUpdateP
   const { manufacturer, depth } = selectedBoxInfo.currentBoxDetails;
 
   // 同じメーカー、同じ奥行きのボックスをフィルタリング
-  const availableBoxes = allBoxes.filter(box => 
+  const availableBoxes = allBoxes.filter(box =>
     box.manufacturer === manufacturer && box.depth === depth
   );
 

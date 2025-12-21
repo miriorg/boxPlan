@@ -1,6 +1,6 @@
 // boxPlan/src/components/LayoutImage.tsx
 
-import { Plan, Box } from '../utils/planning';
+import type { Plan, Box } from '../utils/planning';
 
 interface LayoutImageProps {
   plan: Plan;
@@ -33,7 +33,7 @@ const LayoutImage = ({ plan, allBoxes, onBoxClick }: LayoutImageProps): JSX.Elem
     for (let j = 0; j < colWidths.length; j++) {
       const colWidth = colWidths[j];
       const boxInfo = boxes.find(b => b.row === i && b.col === j);
-      
+
       if (boxInfo) {
         renderedBoxes.push(
           <rect
