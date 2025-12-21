@@ -1,0 +1,100 @@
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem; /* スマホ向けにパディングを減らす */
+  text-align: center;
+}
+
+header {
+  margin-bottom: 1.5rem; /* スマホ向けにマージンを減らす */
+}
+
+h1 {
+  color: var(--primary-color);
+  font-size: 2rem; /* スマホ向けにフォントサイズを調整 */
+}
+
+p {
+  font-size: 0.9rem;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr; /* デフォルトは1カラム */
+  gap: 1.5rem; /* スマホ向けにギャップを減らす */
+}
+
+@media (min-width: 600px) { /* タブレット程度の画面サイズ */
+  main {
+    grid-template-columns: 1fr; /* まだ1カラム維持 */
+    gap: 2rem;
+  }
+  .App {
+    padding: 1.5rem;
+  }
+  h1 {
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 768px) { /* PC程度の画面サイズ */
+  main {
+    grid-template-columns: 300px 1fr; /* PCでは2カラム */
+  }
+  .App {
+    padding: 2rem;
+  }
+  h1 {
+    font-size: 2.5rem;
+  }
+}
+
+.input-section {
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  text-align: left; /* フォームのテキストを左寄せ */
+}
+
+.results-section {
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.error-message-banner {
+  background-color: #ffe0e0; /* 薄い赤色の背景 */
+  color: #d32f2f; /* 濃い赤色の文字 */
+  padding: 0.75rem;
+  border: 1px solid #ef9a9a;
+  border-radius: 4px;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.layout-image-container {
+  overflow-x: auto; /* SVGが幅を超えた場合にスクロール可能にする */
+  max-width: 100%; /* 親要素の幅を超えないようにする */
+  margin-bottom: 1rem;
+}
+.layout-image-container svg {
+    display: block; /* SVGのインライン要素の余白をなくす */
+    margin: 0 auto; /* 中央寄せ */
+    border: 1px solid var(--border-color); /* 枠線 */
+    max-width: 100%; /* コンテナの幅に合わせる */
+    height: auto; /* アスペクト比を維持 */
+}
+
+.plans-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.plan-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fafafa;
+}

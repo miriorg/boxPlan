@@ -1,0 +1,25 @@
+/* Reset and base styles */
+:root {
+  --primary-color: #64BCFC;
+  --secondary-color: #68c5f3;
+  --text-color: #454545;
+  --border-color: #dfdfdf;
+  --background-color: #FFFFFF;
+  --yellow-gradient-start: #FFFFE0; /* Light Yellow for gradient */
+  --yellow-gradient-end: #FDD835;   /* Darker Yellow for gradient */
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+* {
+  box-sizing: border-box;
+}
