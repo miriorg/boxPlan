@@ -123,6 +123,12 @@ const SizeInputForm = ({ onCreatePlan, initialDimensions }: SizeInputFormProps):
           color: red;
           font-size: 0.9rem;
         }
+        @media (max-width: 600px) {
+          .form-field {
+            grid-template-columns: 1fr;
+            gap: 0.25rem;
+          }
+        }
       `}</style>
     </div>
   );

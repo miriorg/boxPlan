@@ -43,18 +43,6 @@ function App(): JSX.Element {
     }
   }, []); // 初回マウント時のみ実行
 
-  // plans の変更を監視し、URLを更新
-  useEffect(() => {
-    // プランと寸法が両方存在する場合のみURLを生成
-    if (plans && plans.length > 0 && spaceDimensions) {
-      // 共有するプランは1つ目のプランと仮定（複数プランの場合はどのプランを共有するか選択が必要）
-      const encoded = serializePlan(spaceDimensions, plans[0]);
-      const newUrl = `${window.location.origin}${window.location.pathname}?plan=${encoded}`;
-      window.history.pushState({ path: newUrl }, '', newUrl);
-      console.log("URL updated:", newUrl);
-    }
-  }, [plans, spaceDimensions]); // plans または spaceDimensions が変更されたときに実行
-
   const handleCreatePlan = (dimensions: Dimensions) => {
     console.log('Creating plan with dimensions:', dimensions);
     setSpaceDimensions(dimensions); // スペースの寸法を保存
@@ -173,7 +161,12 @@ function App(): JSX.Element {
       <main>
         <SizeInputForm onCreatePlan={handleCreatePlan} initialDimensions={spaceDimensions} />
         {plans && plans.length > 0 ? (
-          <PlanResults plans={plans} allBoxes={boxData} onBoxClick={handleBoxClick} />
+          <PlanResults
+            plans={plans}
+            allBoxes={boxData}
+            spaceDimensions={spaceDimensions}
+            onBoxClick={handleBoxClick}
+          />
         ) : (
           <div className="results-section">
             <p>寸法を入力してプランを作成してください。</p>
@@ -199,6 +192,38 @@ function App(): JSX.Element {
           onUpdatePlan={handleUpdatePlan}
         />
       )}
+
+      <style>{`
+        .App {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1rem;
+          font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+          color: #454545;
+        }
+        header {
+          text-align: center;
+          padding: 2rem 0;
+        }
+        header h1 {
+          color: #64BCFC;
+          margin: 0 0 0.5rem 0;
+        }
+        main {
+          min-height: 60vh;
+          padding-bottom: 2rem;
+        }
+        footer {
+          text-align: center;
+          padding: 2rem 0;
+          border-top: 1px solid #eee;
+          color: #999;
+          font-size: 0.8rem;
+        }
+        @media (max-width: 600px) {
+          header h1 { font-size: 1.5rem; }
+        }
+      `}</style>
     </div>
   );
 }

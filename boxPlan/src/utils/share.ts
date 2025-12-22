@@ -13,6 +13,7 @@ export interface BoxData {
   width: number;
   depth: number;
   count?: number;
+  fillcolor?: string;
   [key: string]: any;
 }
 

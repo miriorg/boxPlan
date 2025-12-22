@@ -10,6 +10,7 @@ export interface Box {
   height: number;
   width: number;
   depth: number;
+  fillcolor?: string;
 }
 
 // ユーザーが入力するスペースの寸法
@@ -92,11 +93,11 @@ export const createPlans = (spaceDimensions: Dimensions, allBoxes: Box[]): Plan[
 
         const totalHeight = heights.reduce((a, b) => a + b, 0);
         const totalWidth = widths.reduce((a, b) => a + b, 0);
-        
+
         // ユーザー指定のスペース体積
         // 奥行きはグループのものを利用
         const spaceVolume = spaceDimensions.height * spaceDimensions.width * depth;
-        
+
         let planVolume = 0;
         const placedBoxes: PlacedBox[] = [];
         const boxTypes = new Set<string>();
@@ -156,14 +157,14 @@ export const createPlans = (spaceDimensions: Dimensions, allBoxes: Box[]): Plan[
     if (a.boxCount !== b.boxCount) {
       return a.boxCount - b.boxCount; // 昇順
     }
-    
+
     // 優先度3: ボックス種類数 (上記2つが同じ場合)
     return b.boxTypeCount - a.boxTypeCount; // 降順
   });
 
 
   console.log('--- End Planning ---');
-  
+
   // 上位3件を返す
   return allGeneratedPlans.slice(0, 3);
 };
@@ -209,11 +210,11 @@ const findBestCombinations = (targetSize: number, itemSizes: number[]): number[]
   let tempSize = currentSize;
   while (tempSize > 0) {
     const lastItem = dp[tempSize];
-    if (lastItem === 0 || lastItem === -1) break; 
+    if (lastItem === 0 || lastItem === -1) break;
     bestCombination.push(lastItem);
     tempSize -= lastItem;
   }
-  
+
   // 今回は最もシンプルな1つの組み合わせだけを返すロジックとして実装
   // TODO: 複数の良い組み合わせを返すように拡張する
   return bestCombination.length > 0 ? [bestCombination] : [];
@@ -264,10 +265,10 @@ export const decodeStringToPlan = (encodedString: string, allBoxes: Box[]): Plan
       row: b.r,
       col: b.c,
     }));
-    
+
     // TODO: ここで totalHeight, totalWidth, utilization, boxCount, boxTypeCount を再計算するロジックを追加する
     // 現在の簡易実装では0が返される。
-    
+
     // 再計算に必要な情報が simplifiedPlan に不足している。
     // そのため、デコード後のプランを完全な状態で復元するには、元のプラン生成ロジックの一部を再利用するか、
     // シリアライズする情報をもっと増やす必要がある。
@@ -301,14 +302,14 @@ export const decodeStringToPlan = (encodedString: string, allBoxes: Box[]): Plan
       rowHeights: simplifiedPlan.rowHeights,
       colWidths: simplifiedPlan.colWidths,
       boxes: reconstructedBoxes,
-      
-      totalHeight: totalHeight, 
+
+      totalHeight: totalHeight,
       totalWidth: totalWidth,
       utilization: 0, // 厳密な計算はスペース寸法が必要
       boxCount: reconstructedBoxes.length,
       boxTypeCount: boxTypeIds.size,
     };
-    
+
     return reconstructedPlan;
 
   } catch (error) {

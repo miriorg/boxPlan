@@ -38,15 +38,19 @@
   - [ ] **Step 1: シリアライズ/デシリアライズ関数の実装**
     - [x] `serializePlan(input, plan)`: 入力値とプランデータをJSON化し、Base64エンコードする
     - [x] `deserializePlan(encoded)`: Base64文字列をデコード・パースし、バリデーションを行ってデータを復元する
-  - [ ] **Step 2: URLパラメータ処理と状態復元**
-    - [ ] `App.tsx` 初期化時に `window.location.search` から `plan` パラメータを取得
-    - [ ] 取得したパラメータをデシリアライズし、アプリの状態（入力値、計算結果）を更新する
-  - [ ] **Step 3: UI実装**
-    - [ ] `generateShareUrl(encoded)`: 現在のURLとシリアライズデータから共有用URLを生成
-    - [ ] 結果表示エリアに「共有URLをコピー」ボタンを追加
-    - [ ] クリップボードAPIを使用したコピー機能と、ユーザーへのフィードバック（トースト等）の実装
-- [ ] レスポンシブデザイン対応
+  - [x] **Step 2: URLパラメータ処理と状態復元**
+    - [x] `App.tsx` 初期化時に `window.location.search` から `plan` パラメータを取得
+    - [x] 取得したパラメータをデシリアライズし、アプリの状態（入力値、計算結果）を更新する
+  - [x] **Step 3: UI実装**
+    - [x] `generateShareUrl(encoded)`: 現在のURLとシリアライズデータから共有用URLを生成
+    - [x] 結果表示エリアに「共有URLをコピー」ボタンを追加
+    - [x] クリップボードAPIを使用したコピー機能と、ユーザーへのフィードバック（トースト等）の実装
+- [x] レスポンシブデザイン対応
 - [ ] Vercelへのデプロイ設定
+  - [ ] Vercelアカウントの作成 (GitHubアカウントでログイン)
+  - [ ] Vercelダッシュボードで「Add New Project」を選択
+  - [ ] GitHubリポジトリ `boxPlan` をインポート
+  - [ ] ビルド設定 (Framework Preset: Vite) を確認して「Deploy」を実行
 
 ## 技術的負債
 
