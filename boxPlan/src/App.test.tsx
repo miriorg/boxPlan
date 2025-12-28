@@ -1,8 +1,9 @@
 // boxPlan/src/App.test.tsx
-import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import App from './App';
+import { allBoxes } from './data/boxData';
 
 describe('App', () => {
   it('初期レンダリングでスペース寸法入力フォームが表示されること', () => {
@@ -11,10 +12,12 @@ describe('App', () => {
     expect(screen.getByLabelText('高さ')).toBeInTheDocument();
     expect(screen.getByLabelText('幅')).toBeInTheDocument();
     expect(screen.getByLabelText('奥行き')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'プラン作成' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '開始' })).toBeInTheDocument();
   });
 
   it('プラン作成ボタンクリックでプランが表示されること (有効な入力)', async () => {
+    // DimensionInput内のボタン操作をモック化またはシミュレートする必要があるため、
+    // このテストはより複雑になります。ここでは入力値がデフォルトで有効であると仮定して進めます。
     const user = userEvent.setup();
     render(<App />);
 
@@ -22,7 +25,7 @@ describe('App', () => {
     const heightInput = screen.getByLabelText('高さ');
     const widthInput = screen.getByLabelText('幅');
     const depthInput = screen.getByLabelText('奥行き');
-    const createPlanButton = screen.getByRole('button', { name: 'プラン作成' });
+    const createPlanButton = screen.getByRole('button', { name: '開始' });
 
     expect(heightInput).toHaveValue(1000);
     expect(widthInput).toHaveValue(1200);
@@ -35,31 +38,27 @@ describe('App', () => {
     expect(screen.getAllByText(/プラン \d \(.*\)/)).toHaveLength(3); // 3つのプランが表示されることを想定
   });
 
-  it.skip('無効な入力でプラン作成ボタンをクリックするとエラーメッセージが表示されること', async () => {
+  it('無効な入力（最小サイズ未満）で開始ボタンが無効化されること', async () => {
     const user = userEvent.setup();
     render(<App />);
 
+    const MIN_BOX_SIZE = Math.min(
+      ...allBoxes.flatMap(box => [box.height, box.width, box.depth])
+    );
+
     const heightInput = screen.getByLabelText('高さ');
-    const createPlanButton = screen.getByRole('button', { name: 'プラン作成' });
+    const startButton = screen.getByRole('button', { name: '開始' });
 
+    // 初期状態ではボタンは有効
+    expect(startButton).not.toBeDisabled();
+
+    // 高さを最小サイズ未満にする
     await user.clear(heightInput);
-    // fireEvent.change を使用して値を '0' に設定
-    fireEvent.change(heightInput, { target: { value: '0' } });
-    
-    // input type="number" with min="1" will clamp '0' to '1' in browser behavior.
-    // So, we expect it to be 1 if min attribute is respected by JSDOM/userEvent simulation
-    // or 0 if fireEvent.change bypasses it.
-    // We expect 0 as fireEvent.change should bypass min attribute.
-    expect(heightInput).toHaveValue(0);
+    await user.type(heightInput, (MIN_BOX_SIZE - 1).toString());
 
-    await act(async () => {
-      await user.click(createPlanButton);
-    });
-
-    // ここで waitFor を使用してエラーメッセージが表示されるまで待機
+    // ボタンが無効化されることを確認
     await waitFor(() => {
-      expect(screen.getByText('すべての寸法に正の値を入力してください。')).toBeInTheDocument();
+      expect(startButton).toBeDisabled();
     });
-    expect(screen.queryByText('提案プラン')).not.toBeInTheDocument(); // プランは表示されない
   });
 });

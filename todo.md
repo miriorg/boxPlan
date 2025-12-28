@@ -47,10 +47,10 @@
     - [x] クリップボードAPIを使用したコピー機能と、ユーザーへのフィードバック（トースト等）の実装
 - [x] レスポンシブデザイン対応
 - [ ] Vercelへのデプロイ設定
-  - [ ] Vercelアカウントの作成 (GitHubアカウントでログイン)
-  - [ ] Vercelダッシュボードで「Add New Project」を選択
-  - [ ] GitHubリポジトリ `boxPlan` をインポート
-  - [ ] ビルド設定 (Framework Preset: Vite) を確認して「Deploy」を実行
+  - [x] Vercelアカウントの作成 (GitHubアカウントでログイン)
+  - [x] Vercelダッシュボードで「Add New Project」を選択
+  - [x] GitHubリポジトリ `boxPlan` をインポート
+  - [x] ビルド設定 (Framework Preset: Vite) を確認して「Deploy」を実行
 
 ## 技術的負債
 
